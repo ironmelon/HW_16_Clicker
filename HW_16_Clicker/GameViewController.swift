@@ -11,14 +11,17 @@ import UIKit
 class GameViewController: UIViewController {
 
     @IBOutlet weak var scoreLabel: UILabel!
+    @IBOutlet weak var secondsLabel: UILabel!
     @IBOutlet weak var redTapButton: UIButton!
     @IBOutlet weak var blueTapButton: UIButton!
     @IBOutlet weak var greenTapButton: UIButton!
 
     let enableAlpha: CGFloat = 1.0
     let disableAlpha: CGFloat = 0.5
+    var timer: Timer?
 
     var counter = 0
+    var seconds = 30
     var buttonsArray: [UIButton] {
        return [redTapButton, blueTapButton, greenTapButton]
     }
@@ -27,12 +30,14 @@ class GameViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        updateSecondsLabel()
         updateScoreLabel()
         updateTapButton()
     }
 
     
     @IBAction func tapButtonsPressed(_ sender: Any) {
+        if counter == 0 { timerStarted() }
         counter += 1
         updateScoreLabel()
         updateTapButton()
@@ -42,7 +47,31 @@ class GameViewController: UIViewController {
         scoreLabel.text = "Score: \(counter)"
     }
 
-// MARK: - Button methods
+// MARK: - Timer methods
+
+    func timerStarted() {
+        timer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(timerTickHandler), userInfo: nil, repeats: true)
+    }
+
+    @objc func timerTickHandler() {
+        if seconds == 0 {
+            timerStopped()
+            performSegue(withIdentifier: "gameOverViewController", sender: nil)
+        }
+        seconds -= 1
+        updateSecondsLabel()
+    }
+
+    func timerStopped() {
+        timer?.invalidate()
+        timer = nil
+    }
+
+    func updateSecondsLabel() {
+        secondsLabel.text = "Seconds: \(seconds)"
+    }
+
+// MARK: - Buttons methods
 
     func updateTapButton() {
         let tapButton = getRandomButton()
