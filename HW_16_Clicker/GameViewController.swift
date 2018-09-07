@@ -76,10 +76,8 @@ class GameViewController: UIViewController {
     func updateTapButton() {
         let tapButton = getRandomButton()
         for button in buttonsArray {
-            buttonSelected(false, button: button)
-            if button == tapButton {
-                buttonSelected(true, button: button)
-            }
+            let isTappedButton = button == tapButton
+            buttonSelected(isTappedButton, button: button)
         }
     }
 
